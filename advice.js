@@ -187,6 +187,7 @@ Backbone.Advice = {
    * adds mixin functions to an object
    */
   addMixin: function(obj) {
+    return;
     // adds before, after and around
     ['before', 'after', 'around'].forEach(function(m) {
       obj[m] = function(method, fn) {
