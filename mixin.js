@@ -30,7 +30,7 @@ Mixin.all.overrideWithOptions = function overrideWithOptions() {
  * MIXIN
  * add in a decorate method (like render but sets the element)
  */
-Mixin.view.decorate = function(options) {
+Mixin.view.decorate = function() {
     this.setDefaults({
         wasDecorated_: false,
         decorate: function(el) {
@@ -41,7 +41,7 @@ Mixin.view.decorate = function(options) {
             this.render();
             this.wasDecorated_ = true;
         },
-        canDecorate: function(el) {
+        canDecorate: function() {
             return true;
         }
     });
@@ -137,7 +137,7 @@ Mixin.view.expandable = function() {
     this.around('expand', function(orig, exp) {
         var temp = this.expanded;
         this.expanded = exp === undefined || exp;
-        if (this.temp == this.expanded)
+        if (temp == this.expanded)
             return;
         orig();
         if (this.expanded)
@@ -291,7 +291,7 @@ Mixin.view.handleAdd = function() {
     });
 
     this.setDefaults({
-        onAdd: function(item, collection, options) {
+        onAdd: function(item) {
             this.trigger('add', item);
         }
     });
@@ -309,7 +309,7 @@ Mixin.view.handleRemove = function() {
     });
 
     this.setDefaults({
-        onRemove: function(item, collection, options) {
+        onRemove: function(item) {
             this.trigger('remove', item);
         }
     });
@@ -327,7 +327,7 @@ Mixin.view.handleReset = function() {
     });
 
     this.setDefaults({
-        onReset: function(collection, options) {
+        onReset: function(collection) {
             this.trigger('reset', collection);
         }
     });
@@ -420,7 +420,7 @@ Mixin.view.getChildren = function(options) {
  * MIXIN
  * can call getParent() on view insteand of __manager__.parent
  */
-Mixin.view.getParent = function(options) {
+Mixin.view.getParent = function() {
     this.setDefaults({
         getParent: function() {
             return this.__manager__ &&
@@ -515,7 +515,7 @@ Mixin.view.addInReverseOrder = function(options) {
  * MIXIN
  * toggle selection state on click.
  */
-Mixin.view.clickSelect = function(options) {
+Mixin.view.clickSelect = function() {
 
     this.mixin(Mixin.view.makeSelectable);
 
@@ -526,7 +526,7 @@ Mixin.view.clickSelect = function(options) {
     });
 
     this.setDefaults({
-        selectableElement: function(el) {return true;}
+        selectableElement: function() {return true;}
     });
 
     this.after('onClick', function(event) {
@@ -543,7 +543,6 @@ Mixin.view.scrollToSelectedChild = function(options) {
         if (select === false)
             return;
 
-        var _this = this;
         var el;
         if (_.isFunction(options.scrollEl)) {
             el = $(options.scrollEl(this));
@@ -563,7 +562,7 @@ Mixin.view.scrollToSelectedChild = function(options) {
  * Allow the list to keep track of select state on children and toggle their
  * states.
  */
-Mixin.view.allowSelectableChildren = function(options) {
+Mixin.view.allowSelectableChildren = function() {
 
     this.clobber({
         selectedChildren: [],
@@ -773,7 +772,7 @@ Mixin.view.collectionAutolist = function(options) {
 
     this.after('initialize', function() {
         _.each(this.collection.models, this.addChildView, this);
-        this.collection.on("remove", _.bind(function(model, collection, options) {
+        this.collection.on("remove", _.bind(function(model) {
             this.removeChildView(this.getView(function(view) {
                 return view.model == model;
             }));
