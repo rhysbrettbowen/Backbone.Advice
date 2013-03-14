@@ -322,7 +322,7 @@ Mixin.view.handleRemove = function() {
 Mixin.view.handleReset = function() {
     this.after('initialize', function() {
         this.collection.on("reset", _.bind(function(collection, options) {
-            this.onReset(item, collection, options);
+            this.onReset(collection, options);
         }, this));
     });
 
@@ -544,6 +544,7 @@ Mixin.view.scrollToSelectedChild = function(options) {
             return;
 
         var _this = this;
+        var el;
         if (_.isFunction(options.scrollEl)) {
             el = $(options.scrollEl(this));
         } else {

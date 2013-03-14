@@ -165,11 +165,13 @@ Backbone.Advice = {
 
         // if it's an object then add it to any existing one
         } else if (_.isObject(mixin[key]) && !_.isArray(mixin[key])) {
+          var obj = {};
+          obj[key] = mixin[key];
           this.addToObj(obj);
 
         //else change the value
         } else {
-          this.clobber(obj);
+          this.clobber(key, mixin[key]);
         }
       }, this);
     }, this);
