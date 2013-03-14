@@ -27,10 +27,19 @@ exclude = [
   'test/test-config.js'
 ];
 
+preprocessors = {
+  '**/advice.js': 'coverage',
+  '**/mixin.js': 'coverage'
+};
+
 
 // test results reporter to use
 // possible values: dots || progress
-reporters = ['dots', 'junit'];
+reporters = ['dots', 'junit', 'coverage'];
+coverageReporter = {
+  type : 'cobertura',
+  dir : 'coverage/'
+};
 junitReporter = {
   outputFile: 'test-results.xml'
 };
