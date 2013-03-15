@@ -18,7 +18,10 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 				this.number += 1;
 			}
 		},
-		mixin: after
+		mixin: after,
+		test: {
+			test: true
+		}
 	};
 
 	var fnMixin = function(options) {
@@ -120,6 +123,7 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 			it('should apply the mixins from the object', function() {
 				a.getNumber().should.equal(2);
 				a.number.should.equal(4);
+				a.test.test.should.equal(true);
 			});
 		});
 
