@@ -1,39 +1,39 @@
 <?xml version="1.0"?>
 <testsuites>
-  <testsuite name="PhantomJS 1.8 (Windows)" package="undefined" timestamp="2013-03-14T16:00:04" id="0" hostname="DeveloperPC" tests="31" errors="0" failures="0" time="0.015">
+  <testsuite name="PhantomJS 1.8 (Windows)" package="undefined" timestamp="2013-03-14T16:14:57" id="0" hostname="DeveloperPC" tests="31" errors="0" failures="0" time="0.013">
     <properties>
       <property name="browser.fullName" value="Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.34 (KHTML, like Gecko) PhantomJS/1.8.1 Safari/534.34"/>
     </properties>
     <testcase name="should have properties added from the mixin" time="0.002" classname="PhantomJS 1.8 (Windows).Backbone_Advice #addMixin"/>
     <testcase name="should have hasMixin function" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice create new object"/>
     <testcase name="should multiply number is returned" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #around"/>
-    <testcase name="should be applied before the number is returned" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #before"/>
+    <testcase name="should be applied before the number is returned" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice #before"/>
     <testcase name="should alter the number after it is returned" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #after"/>
     <testcase name="should apply the mixins from the object" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #mixin simple"/>
     <testcase name="should respect the default and options passed in" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #mixin advanced"/>
-    <testcase name="should only applied once" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #mixin more than once"/>
+    <testcase name="should only applied once" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice #mixin more than once"/>
     <testcase name="should have mixin applied to constructor" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #hasMixin"/>
     <testcase name="should have mixin applied to instance" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice #hasMixin"/>
-    <testcase name="should have mixin function" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice inherit mixin through extend"/>
+    <testcase name="should have mixin function" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice inherit mixin through extend"/>
     <testcase name="should have only mixin" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice inherit mixin through extend"/>
-    <testcase name="should have both mixins" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice inherit mixin through extend"/>
-    <testcase name="should gain any properties from the options object" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_all_overrideWithOptions"/>
-    <testcase name="should have selet and deselect methods" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
-    <testcase name="should be selectable" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
-    <testcase name="should not be selected initially" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
+    <testcase name="should have both mixins" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice inherit mixin through extend"/>
+    <testcase name="should gain any properties from the options object" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_all_overrideWithOptions"/>
+    <testcase name="should have selet and deselect methods" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
     <testcase name="should be selectable" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
-    <testcase name="should be able to toggle selected" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
+    <testcase name="should not be selected initially" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
+    <testcase name="should be selectable" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
+    <testcase name="should be able to toggle selected" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeSelectable"/>
     <testcase name="should have expand and collapse methods" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
-    <testcase name="should be expandable" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
-    <testcase name="should be collapsed" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
+    <testcase name="should be expandable" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
+    <testcase name="should be collapsed" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
     <testcase name="should expand" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
     <testcase name="should collapse" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandable"/>
-    <testcase name="should be focusable" time="0.003" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeFocusable"/>
+    <testcase name="should be focusable" time="0.004" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_makeFocusable"/>
     <testcase name="should not be focused or selected" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_focusOnSelect"/>
-    <testcase name="should focus on select" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_focusOnSelect"/>
+    <testcase name="should focus on select" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_focusOnSelect"/>
     <testcase name="should blur on deselect" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_focusOnSelect"/>
     <testcase name="should not be focused or selected" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandWhenSelected"/>
-    <testcase name="should focus on select" time="0.001" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandWhenSelected"/>
+    <testcase name="should focus on select" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandWhenSelected"/>
     <testcase name="should blur on deselect" time="0" classname="PhantomJS 1.8 (Windows).Backbone_Advice_Mixins Mixin_view_expandWhenSelected"/>
     <system-out><![CDATA[
 ]]></system-out>
