@@ -477,32 +477,29 @@ define('Mixin', [
         var parent = this.__manager__.parent;
         var model = this.model;
         var collection = parent.collection;
+        var length = collection.length;
         var before = model;
         var beforeView = null;
+        var views = parent.getViews().value();
+
         // try to get a view in the document to append after
         var modelIsBefore = function(view) {
-          return view.model == before;
+          return before && view && view.model == before;
         };
-        while (before && !beforeView) {
-          before = collection.at(collection.indexOf(before) +
-            (reverse ? 1 : -1));
-          beforeView = parent.getViews().find(modelIsBefore).value();
+        // console.log(_.map(collection.models, function(v) {return v && v.get('date')}));
+        for (var index = collection.indexOf(model) + 1; index < length && !beforeView; index++) {
+          before = collection.at(index);
+          beforeView = _.find(views, modelIsBefore);
+          if (!(beforeView && beforeView.el && beforeView.el.parentNode)) {
+            beforeView = null;
+          }
         }
         // if there is no element to append after then prepend
-        if (collection.models[(
-            reverse ?
-            collection.models.length - 1 :
-            0
-          )] == model ||
-            !beforeView ||
-            !beforeView.el.parentNode) {
-          if (reverse)
-            $(root).append(el);
-          else
-            $(root).prepend(el);
+        if (!beforeView) {
+          $(root).append(el);
         // append the view after the nearest view before it in the DOM
         } else {
-          if (reverse)
+          if (!reverse)
             $(el).insertBefore(beforeView.el);
           else
             $(el).insertAfter(beforeView.el);
