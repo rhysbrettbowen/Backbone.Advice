@@ -116,7 +116,7 @@ define('Backbone.Advice',
         this.mixedIn = _.clone(this.mixedIn) || [];
 
         // if only one passed in make it an array
-        if (!$.isArray(mixins))
+        if (!_.isArray(mixins))
           mixins = [mixins];
 
         // if an array then run each mixin and save to mixedIn array

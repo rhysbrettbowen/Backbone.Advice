@@ -26,10 +26,10 @@
 	"boss": true,
 	"debug": false,
 	"eqnull": true,
-	"es5": false,
+	"es5": true,
 	"esnext": false,
 	"evil": false,
-	"expr": false,
+	"expr": true,
 	"funcscope": false,
 	"globalstrict": true,
 	"iterator": false,
@@ -51,6 +51,7 @@
 	"predef": [
 		"define",
 		"require",
-		"Backbone"
+		"Backbone",
+		"_"
 	]
 }
