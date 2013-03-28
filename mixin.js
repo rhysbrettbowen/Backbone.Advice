@@ -535,6 +535,10 @@ define('Mixin', [
 
   };
 
+  /**
+   * MIXIN
+   * scroll the scrollEl to top of child on selectChild
+   */
   Mixin.view.scrollToSelectedChild = function(options) {
     this.after('selectChild', function(child, select) {
       if (select === false)
@@ -783,6 +787,10 @@ define('Mixin', [
 
   };
 
+  /**
+   * MIXIN
+   * fire a change event when the view should have changed
+   */
   Mixin.view.onViewChange = function() {
     var changeRequest = false;
 
