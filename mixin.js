@@ -161,6 +161,155 @@ define('Mixin', [
 
   /**
    * MIXIN
+   * allows you to see the status of the collection updating
+   */
+  Mixin.collection.updateStatus = function() {
+
+    this.setDefaults({
+      UpdateStatus: {
+        init: 0,
+        loading: 1,
+        loaded: 2,
+        updating: 3
+      },
+      setUpdateStatus: function(status) {
+        if (status == this.updateStatus)
+          return;
+        this.updateState = status;
+        this.trigger('updateStatus', status, this);
+      },
+      getUpdateStatus: function() {
+        return this.updateState;
+      },
+      isRequesting: function() {
+        return this.updateState == 1 || this.updateState == 3;
+      }
+    });
+
+    this.before('initialize', function() {
+      this.setUpdateStatus(0);
+    });
+
+    this.around('fetch', function(orig, options) {
+      if (options.add)
+        this.setUpdateStatus(this.UpdateStatus.updating);
+      else
+        this.setUpdateStatus(this.UpdateStatus.loading);
+      options['success'] =
+        Backbone.Advice.after(options['success'] || function(){},
+          _.bind(function() {
+            this.setUpdateStatus(this.UpdateStatus.loaded);
+          }, this));
+      orig(options);
+    });
+  };
+
+  /**
+   * MIXIN
+   * allows you to hide or show the list element
+   * @param {{listElem: string|Element}} options the element or selector for
+   * the list
+   */
+  Mixin.view.showList = function(options) {
+    this.setDefaults({
+      showList: function(vis) {
+        if (vis === false)
+          this.$(options.listElem).hide();
+        else
+          this.$(options.listElem).show();
+      }
+    });
+  };
+
+  /**
+   * MIXIN
+   * will display a spinner on initial load.
+   * @param {{
+   *   loadingElem: string|Element,
+   *   ?showAll: boolean
+   * }} options loadingElem is the loading element container to show,
+   * showAll will show that element on all loads, not just initial
+   */
+  Mixin.view.showCollectionLoading = function(options) {
+
+    this.mixin([
+      Mixin.view.showList
+    ], options);
+
+    this.before('initialize', function() {
+      this.collection.on('updateStatus', this.updateStatusChange, this);
+      this.updateStatusChange();
+    });
+
+    this.setDefaults({
+      updateStatusChange: function(status) {
+        if (!status)
+          status = this.collection.updateStatus;
+        if (status == this.collection.UpdateStatus.loading ||
+          status == this.collection.UpdateStatus.updating && options.showAll)
+          this.showLoading();
+        if (status == this.collection.UpdateStatus.loaded) {
+          this.showList();
+        }
+      },
+      showLoading: function() {
+        if (options.loadingElem) {
+          this.$(options.loadingElem).show();
+          if (!options.showAll)
+            this.showList(false);
+        }
+      },
+      hideLoading: function() {
+        this.$(options.loadingElem).hide();
+      }
+    });
+
+    this.after('showList', function(vis) {
+      if (vis !== false) {
+        this.hideLoading();
+      }
+    });
+
+  };
+
+  /**
+   * MIXIN
+   * will display a spinner on initial load.
+   * @param {{
+   *   noResultsElem: string|Element
+   * }} options noResultsElem is the element to show when no results
+   */
+  Mixin.view.showNoResults = function(options) {
+
+    this.mixin([
+      Mixin.view.showList
+    ], options);
+
+    this.around('showList', function(orig, vis) {
+      if (vis === false || this.collection.length) {
+        $(options.noResultsElem).hide();
+        return orig(vis);
+      }
+      this.$(options.noResultsElem).show();
+      return orig(false);
+    });
+
+  };
+
+  /**
+   * MIXIN
+   * loads both showNoResults and showLoading mixins
+   */
+  Mixin.view.showLoadAndNoResults = function(options) {
+    this.mixin([
+      Mixin.view.showNoResults,
+      Mixin.view.showCollectionLoading
+    ], options);
+
+  };
+
+  /**
+   * MIXIN
    * Will automatically set expansion state based on selection state.
    */
   Mixin.view.expandWhenSelected = function() {
@@ -344,6 +493,7 @@ define('Mixin', [
   /**
    * MIXIN
    * use when adding elements to the top, will keep scroll in position.
+   * @param {{scrollEl: string|Element}} opt scrollEl is the scroll element
    */
   Mixin.view.keepScroll = function(opt) {
     this.around('onAdd', function(fn, item, collection, options) {
@@ -365,6 +515,8 @@ define('Mixin', [
    * MIXIN
    * register a collection with a model store and use that to check for models
    * before creating them. works with Backbone.ModelStore
+   * @param {{modelStore: Backbone.ModelRegistry}} options the store with which
+   * keep the models
    */
   Mixin.collection.modelStore = function(options) {
 
@@ -391,6 +543,422 @@ define('Mixin', [
 
   };
 
+  /**
+   * MIXIN
+   * toggle selection state on click.
+   */
+  Mixin.view.clickSelect = function() {
+
+    this.mixin(Mixin.view.makeSelectable);
+
+    this.addToObj({
+      events: {
+        'click': 'onClick'
+      }
+    });
+
+    this.setDefaults({
+      selectableElement: function() {return true;}
+    });
+
+    this.after('onClick', function(event) {
+      if (!document.getSelection().isCollapsed)
+        return;
+      if (this.selectableElement(event.target))
+        this.toggleSelect();
+    });
+
+  };
+
+  /**
+   * MIXIN
+   * scroll the scrollEl to top of child on selectChild
+   * @param {{scrollEl: string|Element}} opt scrollEl is the scroll element
+   */
+  Mixin.view.scrollToSelectedChild = function(options) {
+    this.after('selectChild', function(child, select) {
+      if (select === false)
+        return;
+
+      var el;
+      if (_.isFunction(options.scrollEl)) {
+        el = $(options.scrollEl(this));
+      } else {
+        el = this.$(options.scrollEl);
+      }
+      el.scrollTop(
+        el.scrollTop() +
+        child.$el.offset().top -
+        el.offset().top
+      );
+    });
+  };
+
+  /**
+   * MIXIN
+   * Allow the list to keep track of select state on children and toggle their
+   * states.
+   * NB: you may have to create this.getChildren
+   */
+  Mixin.view.allowSelectableChildren = function() {
+
+    this.clobber({
+      selectedChildren: [],
+      selectChild: function(child, select) {
+        if (select === false) {
+          this.deselectChild(child);
+          return;
+        }
+
+        if (!_.contains(this.getChildren(), child))
+          return;
+
+        if (!_.contains(this.selectedChildren, child))
+          this.selectedChildren.push(child);
+
+        if (child.hasMixin(Mixin.view.makeSelectable))
+          child.select();
+
+        return child;
+      },
+      deselectChild: function(child) {
+        if (!_.contains(this.selectedChildren, child))
+          return;
+
+        this.selectedChildren = _.without(this.selectedChildren, child);
+
+        if (child.hasMixin(Mixin.view.makeSelectable))
+          child.deselect();
+
+        return child;
+      }
+
+    });
+  };
+
+  /**
+   * MIXIN
+   * Only allow one child at a time to be selected.
+   * NB: you may have to create this.getChildren ()
+   * @param {{?stopAtEnds: boolean}} options whether selection wraps.
+   */
+  Mixin.view.singleSelectChild = function(options) {
+
+    this.mixin([
+      // Mixin.view.getChildren,
+      Mixin.view.allowSelectableChildren
+    ], options);
+
+    this.after('initialize', function() {
+      if (this.collection && this.collection instanceof Backbone.Collection)
+        this.listenTo(this.collection, 'reset', _.bind(function(){
+          this.selectedChild = null;
+          this.selectedChildren = [];
+        }, this));
+    });
+
+    this.before('selectChild', function(child, select) {
+      var children = this.getChildren();
+
+      if (!_.contains(children, child))
+        return;
+
+
+      if (select === false) {
+        if (this.selectedChild == child) {
+          this.selectedChild = null;
+          this.selectedChildren = [];
+        }
+        return;
+      }
+
+      _.chain(children).difference([child]).filter(function(child) {
+        return child.hasMixin(Mixin.view.makeSelectable);
+      }).each(function(child) {
+        child.deselect();
+      });
+
+      this.selectedChildren = [];
+      this.selectedChild = child;
+
+    });
+
+    this.after('deselectChild', function(child) {
+      if (this.selectedChild == child)
+        this.selectedChild = null;
+    });
+
+    this.clobber({
+
+      selectNextChild: function() {
+        this.selectRelativeChild(-1);
+      },
+
+      hasNextChild:function(){
+        if (!this.selectedChild)
+          return;
+
+        var children = _.filter(this.getChildren(), function(view) {
+          return view.selectable && view.isSelectable();
+        });
+        var currInd = _.indexOf(children, this.selectedChild);
+
+        return currInd - 1 >= 0;
+      },
+
+      selectPreviousChild: function() {
+        this.selectRelativeChild(1);
+      },
+
+      selectRelativeChild: function(rel) {
+        if (!this.selectedChild)
+          return;
+
+        var children = _.filter(this.getChildren(), function(view) {
+          return view.selectable && view.isSelectable();
+        });
+
+        var child = this.selectedChild;
+        var length = children.length;
+        var next = null;
+
+        var nextInd = 0;
+        var currInd = _.indexOf(children, child);
+
+        if (!length)
+          return;
+
+        if (options.stopAtEnds && rel + currInd > length - 1) {
+          nextInd = length - 1;
+        } else if (options.stopAtEnds && rel + currInd < 0) {
+          nextInd = 0;
+        } else {
+          // make sure relative is within limits
+          rel = rel % length;
+          // the index of the relative child (allows negatives)
+          nextInd = (currInd + rel + length) % length;
+        }
+
+        next = children[nextInd];
+
+        return this.selectChild(next);
+      },
+
+      selectFirstChild: function() {
+        var children = this.getChildren();
+        if (children.length)
+          return this.selectChild(children[0]);
+      },
+
+      selectLastChild: function() {
+        var children = this.getChildren();
+        if (children.length)
+          return this.selectChild(children[children.length - 1]);
+      }
+    });
+
+  };
+
+  /****************************************
+  ** For use with Backbone.ComponentView **
+  ****************************************/
+
+  /**
+   * MIXIN
+   * @param  {{
+   *   ?itemTemplate: string,
+   *   ?contentElement: string|Element,
+   *   ?setup: Object
+   * }} options itemTemplate to override template of items,
+   * contentElement to override where list is placed,
+   * setup object to be passed in to new item's constructor
+   */
+  Mixin.ComponentView.autoBigList = function(options) {
+
+    if (options.contentElement)
+      this.clobber({
+        getContentElement: function() {
+          return this.$el.find(options.contentElement);
+        }
+      });
+
+    var createEl = function(tagName, className, attributes, id, innerHTML) {
+      var html = '<' + tagName;
+      html += (className ? ' class="' + className + '"' : '');
+      if (attributes) {
+        _.each(attributes, function(val, key) {
+          html += ' ' + key + '="' + val + '"';
+        });
+      }
+      html += (id ? ' id="' + id + '"' : '');
+      html += '>' + innerHTML + '</' + tagName + '>';
+      return html;
+    };
+
+    this.after('initialize', function() {
+      var iv = this.itemView.prototype;
+      this._autobiglist = {
+        html: '',
+        template: Handlebars.compile(
+          createEl(
+            iv.tagName, iv.className, iv.attributes, iv.id,
+            (options.itemTemplate || iv.template)
+          )
+        ),
+        toAdd: []
+      };
+    });
+
+    this.after('enterDocument', function() {
+      this.collection.on('reset', this.autolist_, this);
+      this.collection.on('add', this.autolist_, this);
+      this.collection.on('remove', this.rem_, this);
+      this.doneListing_ = _.debounce(this.doneListing_, 100);
+      this.autolist_();
+    });
+
+    this.setDefaults({
+      autolist_: function(model, silent) {
+        var toAdd = this._autobiglist.toAdd;
+        var template = this._autobiglist.template;
+        if (model instanceof Backbone.Model) {
+          var setup = _.extend({}, options.setup);
+          setup.model = model;
+          var item = new this.itemView(setup);
+          toAdd.push(item);
+          this._autobiglist.html += template(item.serialize());
+        } else if(model) {
+          $(this.getContentElement()).empty();
+          _.each(model.models, function(mod) {
+            this.autolist_(mod, true);
+          }, this);
+        }
+        if (silent !== true)
+          this.doneListing_();
+      },
+      doneListing_: function() {
+        var html = this._autobiglist.html;
+        var toAdd = this._autobiglist.toAdd;
+        if (!html)
+          return;
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        var els = _.toArray(div.childNodes);
+        var l = els.length;
+        html = '';
+        var frag = document.createDocumentFragment();
+        for (var i = 0; i < l; i++) {
+          frag.appendChild(els[i]);
+        }
+        this.getContentElement().appendChild(frag);
+        for (i = 0; i < l; i++) {
+          toAdd[i].decorate(els[i]);
+        }
+        this._autobiglist.toAdd = [];
+      }
+    });
+
+  };
+
+  /**
+   * MIXIN
+   * @param  {{
+   *   ?contentElement: string|Element
+   * }} options contentElement to override where list is placed
+   */
+  Mixin.ComponentView.autolist = function(options) {
+    if (options.contentElement)
+      this.clobber({
+        getContentElement: function() {
+          return this.$el.find(options.contentElement);
+        }
+      });
+
+    this.after('enterDocument', function() {
+      if(this.collection instanceof Array)
+        this.collection = new Backbone.Collection(this.collection);
+
+      this.listenTo(this.collection, 'reset', this.autolist_);
+      this.listenTo(this.collection, 'sort', this.autolist_);
+      this.listenTo(this.collection, 'add', this.autolist_);
+      this.listenTo(this.collection, 'remove', this.autolist_);
+
+      this.autolist_();
+    });
+
+    this.after('initialize', function() {
+      _.bindAll(this, 'autolist_');
+    });
+
+    this.setDefaults({
+      itemViewSetup: {},
+      autolist_: function() {
+        // var frag = document.createDocumentFragment();
+
+        this.beforeList(this.getContentElement());
+        // var el = this.getContentElement();
+
+        var model = this.collection;
+        var models = model.models;
+        var children = this._children || [];
+
+        var childModels = _.map(children, function(child) {
+          return child.getModel();
+        });
+
+        var removed = _.filter(children, function(child) {
+          return !_.contains(models, child.getModel());
+        });
+
+        if (children.length === 0) {
+          _.each(models, function(model) {
+            var setup = _.extend({}, this.itemViewSetup);
+            if (model instanceof Backbone.Model)
+              setup.model = model;
+            if (model instanceof Backbone.Collection)
+              setup.collection = model;
+            var newChild = new this.itemView(setup);
+            this.addChild(newChild, true);
+          }, this);
+        } else {
+          _.each(removed, function(child) {
+            if (!_.chain(this.views)
+                .values()
+                .flatten()
+                .contains(child)
+                .value()) {
+              this.removeChild(child, true);
+              child.dispose();
+            }
+          }, this);
+          _.each(models, function(model, ind) {
+            var child;
+            if(!_.contains(childModels, model)) {
+              var setup = _.extend({}, this.itemViewSetup);
+              if (model instanceof Backbone.Model)
+                setup.model = model;
+              if (model instanceof Backbone.Collection)
+                setup.collection = model;
+              child = new this.itemView(setup);
+              child.createDom();
+              this.addChildAt(child, ind, true);
+            } else {
+              child = _.find(children, function(c) {
+                return c.getModel() == model;
+              });
+              if (this.getChildAt(ind) != child)
+                this.addChildAt(child, ind);
+            }
+
+          }, this);
+        }
+        this.afterList(this.getContentElement());
+      },
+      afterList: function() {},
+      beforeList: function() {}
+    });
+  };
+
   /*******************************
   ** For use with LayoutManager **
   *******************************/
@@ -407,7 +975,11 @@ define('Mixin', [
       defaultChildContainer: '.content',
 
       getChildren: function(container) {
-        return this.views[container || options.childContainer || this.defaultChildContainer] || [];
+        return this.views[
+          container ||
+          options.childContainer ||
+          this.defaultChildContainer
+        ] || [];
       },
 
       getAllChildren: function() {
@@ -486,8 +1058,9 @@ define('Mixin', [
         var modelIsBefore = function(view) {
           return before && view && view.model == before;
         };
-        // console.log(_.map(collection.models, function(v) {return v && v.get('date')}));
-        for (var index = collection.indexOf(model) + 1; index < length && !beforeView; index++) {
+        for (var index = collection.indexOf(model) + 1;
+            index < length && !beforeView;
+            index++) {
           before = collection.at(index);
           beforeView = _.find(views, modelIsBefore);
           if (!(beforeView && beforeView.el && beforeView.el.parentNode)) {
@@ -508,190 +1081,7 @@ define('Mixin', [
     });
   };
 
-  /**
-   * MIXIN
-   * toggle selection state on click.
-   */
-  Mixin.view.clickSelect = function() {
 
-    this.mixin(Mixin.view.makeSelectable);
-
-    this.addToObj({
-      events: {
-        'click': 'onClick'
-      }
-    });
-
-    this.setDefaults({
-      selectableElement: function() {return true;}
-    });
-
-    this.after('onClick', function(event) {
-      if (!document.getSelection().isCollapsed)
-        return;
-      if (this.selectableElement(event.target))
-        this.toggleSelect();
-    });
-
-  };
-
-  /**
-   * MIXIN
-   * scroll the scrollEl to top of child on selectChild
-   */
-  Mixin.view.scrollToSelectedChild = function(options) {
-    this.after('selectChild', function(child, select) {
-      if (select === false)
-        return;
-
-      var el;
-      if (_.isFunction(options.scrollEl)) {
-        el = $(options.scrollEl(this));
-      } else {
-        el = this.$(options.scrollEl);
-      }
-      el.scrollTop(
-        el.scrollTop() +
-        child.$el.offset().top -
-        el.offset().top
-      );
-    });
-  };
-
-  /**
-   * MIXIN
-   * Allow the list to keep track of select state on children and toggle their
-   * states.
-   */
-  Mixin.view.allowSelectableChildren = function() {
-
-    this.clobber({
-      selectedChildren: [],
-      selectChild: function(child, select) {
-        if (select === false) {
-          this.deselectChild(child);
-          return;
-        }
-
-        if (!_.contains(this.getAllChildren(), child))
-          return;
-
-        if (!_.contains(this.selectedChildren, child))
-          this.selectedChildren.push(child);
-
-        if (child.hasMixin(Mixin.view.makeSelectable))
-          child.select();
-
-        return child;
-      },
-      deselectChild: function(child) {
-        if (!_.contains(this.views, child))
-          return;
-
-        this.selectedChildren = _.without(this.selectedChildren, child);
-
-        if (child.hasMixin(Mixin.view.makeSelectable))
-          child.deselect();
-
-        return child;
-      }
-
-    });
-  };
-
-  /**
-   * MIXIN
-   * Only allow one child at a time to be selected.
-   */
-  Mixin.view.singleSelectChild = function(options) {
-
-    this.mixin([
-      Mixin.view.allowSelectableChildren,
-      Mixin.view.getChildren
-    ], options);
-
-    this.before('selectChild', function(child, select) {
-      var children = this.getAllChildren();
-
-      if (!_.contains(children, child))
-        return;
-
-      if (select === false) {
-        if (this.selectedChild == child) {
-          this.selectedChild = null;
-          this.selectedChildren = [];
-        }
-        return;
-      }
-
-      _.chain(children).difference([child]).filter(function(child) {
-        return child.hasMixin(Mixin.view.makeSelectable);
-      }).each(function(child) {
-        child.deselect();
-      });
-
-      this.selectedChildren = [];
-      this.selectedChild = child;
-
-    });
-
-    this.clobber({
-      selectNextChild: function() {
-        this.selectRelativeChild(-1);
-      },
-
-      selectPreviousChild: function() {
-        this.selectRelativeChild(1);
-      },
-
-      selectRelativeChild: function(rel) {
-        if (!this.selectedChild)
-          return;
-
-        var children = _.filter(this.getAllChildren(), function(view) {
-          return view.selectable && view.isSelectable();
-        });
-
-        var child = this.selectedChild;
-        var length = children.length;
-        var next = null;
-
-        var nextInd = 0;
-        var currInd = _.indexOf(children, child);
-
-        if (!length)
-          return;
-
-        if (options.stopAtEnds && rel + currInd > length - 1) {
-          nextInd = length - 1;
-        } else if (options.stopAtEnds && rel + currInd < 0) {
-          nextInd = 0;
-        } else {
-          // make sure relative is within limits
-          rel = rel % length;
-          // the index of the relative child (allows negatives)
-          nextInd = (currInd + rel + length) % length;
-        }
-
-        next = children[nextInd];
-
-        return this.selectChild(next);
-      },
-
-      selectFirstChild: function() {
-        var children = this.getChildren();
-        if (children.length)
-          return this.selectChild(children[0]);
-      },
-
-      selectLastChild: function() {
-        var children = this.getChildren();
-        if (children.length)
-          return this.selectChild(children[children.length - 1]);
-      }
-    });
-
-  };
 
   /**
    * MIXIN
@@ -755,7 +1145,8 @@ define('Mixin', [
       sortViewArray: function(selector) {
         var _this = this;
         this.views[selector].sort(function(a, b) {
-          return _this.collection.indexOf(a.model) - _this.collection.indexOf(b.model);
+          return _this.collection.indexOf(a.model) -
+            _this.collection.indexOf(b.model);
         });
       },
       removeChildView: function(item) {

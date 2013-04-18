@@ -52,6 +52,7 @@
 		"define",
 		"require",
 		"Backbone",
-		"_"
+		"_",
+		"Handlebars"
 	]
 }
