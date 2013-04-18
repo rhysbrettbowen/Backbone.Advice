@@ -214,6 +214,29 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 				b.hasMixin(mixin2).should.be.true;
 			});
 		});
+
+		describe('should be able to override mixin options', function() {
+			var mixin = function(options) {
+				this.clobber('initialize', function() {
+					this.id = options.id;
+				});
+			};
+
+			var View1 = Backbone.View.extend().mixin(mixin, {id: 1}).mixin([], {id:2});
+
+			var view1 = new View1();
+
+			it('should override on the same constructor', function() {
+				view1.id.should.equal(2);
+			});
+
+			it('should not override only on tha applied constructor', function() {
+				var View2 = View1.extend().mixin([], {id:3});
+				var view2 = new View2();
+				view1.id.should.equal(2);
+				view2.id.should.equal(3);
+			});
+		});
 	});
 
 	describe('Backbone.Advice.Mixins', function() {

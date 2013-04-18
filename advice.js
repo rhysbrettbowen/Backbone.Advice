@@ -63,11 +63,16 @@ define('Backbone.Advice',
       /**
        * if it exists then overwrite
        */
-      clobber: function(obj) {
+      clobber: function(key, value) {
         var base = this;
         if (typeof base == 'function')
           base = this.prototype;
-        _.extend(base, obj);
+        if (_.isString(key)) {
+          var temp = key;
+          key = {};
+          key[temp] = value;
+        }
+        _.extend(base, key);
         return this;
       },
 
@@ -114,6 +119,10 @@ define('Backbone.Advice',
 
         // used to saved applied mixins
         this.mixedIn = _.clone(this.mixedIn) || [];
+        if (!this.__super__ ||
+            this.mixedOptions == this.__super__.constructor.mixedIn)
+          this.mixedOptions = _.clone(this.mixedOptions) || {};
+        _.extend(this.mixedOptions, options);
 
         // if only one passed in make it an array
         if (!_.isArray(mixins))
@@ -126,7 +135,7 @@ define('Backbone.Advice',
           if (!_.contains(this.mixedIn, mixin)) {
             this.mixedIn.push(mixin);
             if(mixin)
-              return mixin.call(this, options || {});
+              return mixin.call(this, this.mixedOptions);
           }
         }, this);
 
@@ -149,7 +158,7 @@ define('Backbone.Advice',
           ]).each(function(key) {
             if (mixin[key]) {
               if (key == 'mixin')
-                this[key](mixin[key], options || {});
+                this[key](mixin[key], this.mixedOptions);
               else
                 this[key](mixin[key]);
               delete mixin[key];
