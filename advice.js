@@ -120,7 +120,7 @@ define('Backbone.Advice',
         // used to saved applied mixins
         this.mixedIn = _.clone(this.mixedIn) || [];
         if (!this.__super__ ||
-            this.mixedOptions == this.__super__.constructor.mixedIn)
+            this.mixedOptions == this.__super__.constructor.mixedOptions)
           this.mixedOptions = _.clone(this.mixedOptions) || {};
         _.extend(this.mixedOptions, options);
 
