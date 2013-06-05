@@ -1,6 +1,6 @@
 # Backbone.Advice #
 
-Use requireJS to import - or whatever.
+Use requireJS to import - or whatever you want.
 
 Based on the Advice functional mixin library by Angus Croll. Adds functional mixin abilities for Backbone objects.
 
@@ -155,4 +155,14 @@ see Backbone.Advice.Mixins (mixin.js) for some useful mixins you can use today!
 
 to test open up test.html or run testacular with testacular.conf.js
 
+#Changelog
 
+##Advice
+
+###v1.0.0
+- initial versioning
+
+##Mixin
+
+###v1.0.0
+- initial versioning
