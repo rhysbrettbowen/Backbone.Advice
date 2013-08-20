@@ -4,6 +4,8 @@ Use requireJS to import - or whatever you want.
 
 Based on the Advice functional mixin library by Angus Croll. Adds functional mixin abilities for Backbone objects.
 
+There can be issues when extending classes that already have mixins and you may overrwrite needed functionality that has been mixed in. To get around this we use https://github.com/rhysbrettbowen/Backbone.AdviceFactory
+
 ## Features ##
 
 Gives a convenient way to add functionality as needed and reuse components together.
