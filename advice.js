@@ -197,7 +197,7 @@ define([
      */
     addMixin: function(obj) {
       // adds before, after and around
-      ['before', 'after', 'around'].forEach(function(m) {
+      _.each(['before', 'after', 'around'], function(m) {
         obj[m] = function(method, fn) {
 
           // if an object is passed in then split that in to individual calls
