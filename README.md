@@ -16,7 +16,7 @@ Advice and Mixins are provided for use with requirejs, if you'd just like to add
 
 ```javascript
 // add the mixin capability (may already be done for you)
-Backbone.Advice.addMixin(Backbone.Views)
+Backbone.Advice.addMixin(Backbone.View)
 
 // define a mixin
 var namer = function(options) {
@@ -42,7 +42,7 @@ var namer = function(options) {
 
 	// first argument will be the original function - can also take an object of functions
 	this.around('getName', function(orig) {
-		return orig.split(' ')[0];
+		return orig().split(' ')[0];
 	});
 
 	// can even extend objects - useful for adding events
@@ -65,16 +65,17 @@ var namer = function(options) {
 }
 
 
-var Speaker = Backbone.Views.extend({
-	name: 'Bob' // the set defaults won't override this
+var Speaker = Backbone.View.extend({
+	name: 'Bob White' // the set defaults won't override this
 }).mixin([
 	namer
 ], { // options passed in
 	times: 3
 });
 
-var bob = new Speaker(); // Hello Bob
-                         // for the 4th time
+var bob = new Speaker(); 
+bob.speak();  // Hello Bob
+              // for the 4th time
 
 ```
 
