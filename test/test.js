@@ -5,7 +5,10 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 
 	var after = {
 		getNumber: function() {
-			this.number *= 2;
+			return this.number *= 2;
+		},
+		returnBar: function() {
+		  return 'bar';
 		}
 	};
 
@@ -15,7 +18,7 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 		},
 		before: {
 			getNumber: function () {
-				this.number += 1;
+				return this.number += 1;
 			}
 		},
 		mixin: after,
@@ -94,18 +97,21 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 		describe('#after', function() {
 			var A = function() {};
 			A.prototype = {
-				number: 1,
-				getNumber: function() {
-					return this.number;
+        // number: 1,
+        // getNumber: function() {
+        //  return this.number;
+        // },
+				val: 'foo',
+				getValue: function() {
+				  return this.val;
 				}
 			};
 			Backbone.Advice.addMixin(A);
-			A.after('getNumber', after.getNumber);
+			A.after('getValue', after.returnBar);
 			var a = new A();
-			it('should alter the number after it is returned', function() {
-				a.getNumber().should.equal(1);
-				a.number.should.equal(2);
-			});
+		  it('should return the value returned by the last function applied as an after', function() {
+  			a.getValue().should.equal('bar');
+  	  });
 		});
 
 		describe('#mixin simple', function() {
@@ -121,8 +127,7 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 			var a = new A();
 
 			it('should apply the mixins from the object', function() {
-				a.getNumber().should.equal(2);
-				a.number.should.equal(4);
+				a.getNumber().should.equal(4);
 				a.test.test.should.equal(true);
 			});
 		});
@@ -145,8 +150,7 @@ define(['chai', 'Backbone.Advice', 'Mixin'], function(chai) {
 
 			it('should respect the default and options passed in', function() {
 				b.clobber.should.be.true;
-				b.getNumber().should.equal(3);
-				b.number.should.equal(6);
+				b.getNumber().should.equal(6);
 			});
 		});
 
