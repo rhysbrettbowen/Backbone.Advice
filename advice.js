@@ -53,8 +53,7 @@ define([
         var res = (orig.unbound || orig).apply(this, args);
 
         afterFn = (typeof after == 'function') ? after : after.obj[after.fnName];
-        afterFn.apply(this, args);
-        return res;
+        return afterFn.apply(this, args);
       });
     },
 
