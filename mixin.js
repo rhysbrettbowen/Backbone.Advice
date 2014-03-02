@@ -195,8 +195,8 @@ define('Mixin', [
         this.setUpdateStatus(this.UpdateStatus.updating);
       else
         this.setUpdateStatus(this.UpdateStatus.loading);
-      options['success'] =
-        Backbone.Advice.after(options['success'] || function(){},
+      options.success =
+        Backbone.Advice.after(options.success || function(){},
           _.bind(function() {
             this.setUpdateStatus(this.UpdateStatus.loaded);
           }, this));
