@@ -14,10 +14,18 @@
 // http://opensource.org/licenses/MIT
 // ==========================================
 
-define([
-  'backbone',
-  'underscore'
-], function (Backbone, _) {
+(function(root, factory) {
+  if (typeof exports !== 'undefined') {
+    // Define as CommonJS export:
+    module.exports = factory(require('underscore'), require('backbone'));
+  } else if (typeof define === 'function' && define.amd) {
+    // Define as AMD:
+    define('backbone.advice',['underscore', 'backbone'], factory);
+  } else {
+    // Just run it:
+    factory(root._, root.Backbone);
+  }
+}(this, function(_, Backbone) { 
 
   Backbone.Advice = {
 
@@ -243,4 +251,4 @@ define([
 
   return Backbone.Advice;
 
-});
+}));
