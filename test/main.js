@@ -24,10 +24,10 @@ require.config({
   },
 
   paths: {
-    'chai': 'lib/chai/chai',
-    'jquery': 'lib/jquery.1.7.2',
-    'underscore': 'lib/underscore',
-    'backbone': 'lib/backbone',
+    'chai': 'app/bower_components/chai/chai',
+    'jquery': 'app/bower_components/jquery/jquery.min',
+    'underscore': 'app/bower_components/underscore/underscore',
+    'backbone': 'app/bower_components/backbone/backbone',
     'Backbone.Advice': 'advice',
     'Mixin': 'mixin'
   },

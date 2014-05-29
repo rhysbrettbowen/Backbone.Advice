@@ -1,14 +1,26 @@
 # Backbone.Advice #
 
-Use requireJS to import - or whatever you want.
+Use requireJS to import -- or whatever you want.
 
 Based on the Advice functional mixin library by Angus Croll. Adds functional mixin abilities for Backbone objects.
 
-There can be issues when extending classes that already have mixins and you may overrwrite needed functionality that has been mixed in. To get around this we use https://github.com/rhysbrettbowen/Backbone.AdviceFactory
+There can be issues when extending classes that already have mixins and you may overrwrite needed functionality that has been mixed in. To get around this we use [Backbone.AdviceFactory](https://github.com/rhysbrettbowen/Backbone.AdviceFactory).
 
 ## Features ##
 
 Gives a convenient way to add functionality as needed and reuse components together.
+
+## Installation ##
+### Bower
+To install Backbone.Advice via [Bower](http://bower.io):
+
+    bower install backbone.advice
+
+### From source
+Download the [latest zip file](https://github.com/rhysbrettbowen/Backbone.Advice/archive/master.zip)
+or clone the repository from GitHub:
+
+    git clone https://github.com/rhysbrettbowen/Backbone.Advice
 
 ## Usage ##
 
@@ -73,7 +85,7 @@ var Speaker = Backbone.View.extend({
 	times: 3
 });
 
-var bob = new Speaker(); 
+var bob = new Speaker();
 bob.speak();  // Hello Bob
               // for the 4th time
 
@@ -156,7 +168,13 @@ see Backbone.Advice.Mixins (mixin.js) for some useful mixins you can use today!
 
 ## Tests ##
 
-to test open up test.html or run testacular with testacular.conf.js
+Install dependencies
+
+    bundle install
+
+and open the file `test.html` in your browser.
+
+_TBD_: re-enable testing with testacular/karma.
 
 #Changelog
 

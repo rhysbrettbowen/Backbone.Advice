@@ -1,0 +1,48 @@
+{
+  "name": "Backbone.Advice",
+  "version": "1.0.0",
+  "homepage": "https://github.com/rhysbrettbowen/Backbone.Advice",
+  "author": {
+    "name": "Rhys Brett-Bowen",
+    "email": "rhysbrettbowen@gmail.com",
+    "web": "http://rhysbrettbowen.com"
+  },
+  "description": "Functional mixins for Backbone based on Advice by Angus Croll",
+  "main": "advice.js",
+  "scripts": [
+    "advice.js",
+    "mixin.js"
+  ],
+  "keywords": [
+    "backbone",
+    "plugin",
+    "advice",
+    "pattern"
+  ],
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/rhysbrettbowen/Backbone.Advice/blob/master/LICENSE"
+    }
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    ".gitignore",
+    "bower.json",
+    "test",
+    "test.html",
+    "karma.conf.js"
+  ],
+  "dependencies": {
+    "backbone": "*",
+    "underscore": "*",
+    "requirejs": "*"
+  },
+  "devDependencies": {
+    "jquery": "~1.7.2",
+    "chai": "~1.9.0",
+    "mocha": "~1.17.1"
+  }
+}
