@@ -14,10 +14,10 @@ require.config({
   },
 
   paths: {
-    'chai': 'app/bower_components/chai/chai',
-    'jquery': 'app/bower_components/jquery/jquery.min',
-    'underscore': 'app/bower_components/underscore/underscore',
-    'backbone': 'app/bower_components/backbone/backbone',
+    'chai': 'bower_components/chai/chai',
+    'jquery': 'bower_components/jquery/jquery.min',
+    'underscore': 'bower_components/underscore/underscore',
+    'backbone': 'bower_components/backbone/backbone',
     'Backbone.Advice': 'advice',
     'Mixin': 'mixin',
     'test': 'test/test'
